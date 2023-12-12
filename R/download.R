@@ -1,3 +1,7 @@
+#' @include utils.R
+#' 
+NULL
+
 HGNC_GENE_INFO = 'https://ftp.ebi.ac.uk/pub/databases/genenames/hgnc/json/hgnc_complete_set.json'
 NCBI_GENE_INFO = 'https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz'
 ENSEMBL_BIOMART = '\'http://www.ensembl.org/biomart/martservice?query=<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Attribute name = "ensembl_gene_id" /><Attribute name = "external_gene_name" /><Attribute name = "chromosome_name" /><Attribute name = "band" /><Attribute name = "entrezgene_id" /><Attribute name = "hgnc_id" /><Attribute name = "hgnc_symbol" /></Dataset></Query>\''
@@ -56,7 +60,7 @@ download_hgnc = function(dir, force = FALSE) {
     }
     if (status == 0L) {
       logfile = file.path(dir, "history")
-      write_tsv(file.info(destfile), logfile)
+      write_tsv(file.info(destfile), logfile, append = TRUE)
     }
     invisible(status)
   } else {
@@ -82,7 +86,7 @@ download_ncbi = function(dir, force = FALSE) {
     status = download_file(NCBI_GENE_INFO, destfile)
     if (status == 0L) {
       logfile = file.path(dir, "history")
-      write_tsv(file.info(destfile), logfile)
+      write_tsv(file.info(destfile), logfile, append = TRUE)
     }
     invisible(status)
   } else {
@@ -108,11 +112,14 @@ download_ensembl = function(dir, force = FALSE) {
     dest = sub("\\.[[:alnum:]]+$", "", destfile)
     status = download_file(ENSEMBL_BIOMART, dest)
     if (status == 0L) {
-      status = system2("gzip", c("-f", dest))
+      status = system2("sed", c("-i", "'1i gene_id\tgene_name\tchr\tband\tentrez_id\thgnc_id\thgnc_symbol'", dest))
+      if (status == 0L) {
+        status = system2("gzip", c("-f", dest))
+      }
     }
     if (status == 0L) {
       logfile = file.path(dir, "history")
-      write_tsv(file.info(destfile), logfile)
+      write_tsv(file.info(destfile), logfile, append = TRUE)
     }
     invisible(status)
   } else {
