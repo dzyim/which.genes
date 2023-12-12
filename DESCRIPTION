@@ -1,0 +1,17 @@
+Package: which.genes
+Title: Which Genes Are They: A conversion tool and a vocabulary generator for gene symbols and IDs
+Version: 0.0.0.9000
+Authors@R: 
+    person("Chen", "Liang", , "chen.liang@ghddi.org", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0404-1232"))
+Description: 'which.genes' is a tool for querying gene information by
+    either gene symbols, aliases, or IDs.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    data.table,
+    jsonlite,
+    magrittr,
+    stringr
